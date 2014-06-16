@@ -2,7 +2,6 @@ var meta_collection = 'metainfo'; // collection:metainfo
 var stop_collection = 'test.stop'; // database:test collection:stop
 
 function copy( op, tag, infos ) {
-	var conn = connect( tag[0] );
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.master.collection != tag[1] ) continue;
@@ -10,6 +9,7 @@ function copy( op, tag, infos ) {
 		if ( !master ) continue;
 		var referrer = get_referrer( op.o2, info );
 		if ( !referrer ) continue;
+		var conn = connect( tag[0] );
 		conn[ info.referrer.collection ].update( referrer, { $set: master }, { multi: true } );
 	}
 }
@@ -39,18 +39,17 @@ function get_referrer( data, info ) {
 
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
-
-while ( cursor.hasNext() ) { cursor.next(); } // skip
+cursor.skip( cursor.count() );
 
 var infos = {};
 var stop = false;
 while ( !stop ) {
 	var now = new Date();
-//	printjson( now );
+//printjson( now );
 
 	while ( cursor.hasNext() ) {
 		var op = cursor.next();
-printjson( op );
+//printjson( op );
 		if ( op.ns === stop_collection ) {
 			stop = true;
 			break;
@@ -59,7 +58,7 @@ printjson( op );
 		var tag = op.ns.split('.');
 		if ( !infos[ tag[0] ] || tag[1] === meta_collection ) {
 			var conn = connect( tag[0] );
-			infos[ tag[0] ] = conn[meta_collection].find(  ).toArray();
+			infos[ tag[0] ] = conn[meta_collection].find().toArray();
 		}
 
 		if ( !op.o2 ) continue;
