@@ -1,0 +1,2 @@
+mongo < test.js
+
