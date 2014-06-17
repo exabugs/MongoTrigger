@@ -56,12 +56,12 @@ while ( !stop ) {
 		}
 
 		var tag = op.ns.split('.');
-		if ( !infos[ tag[0] ] || tag[1] === meta_collection ) {
+		if ( infos[ tag[0] ] === undefined || tag[1] === meta_collection ) {
 			var conn = connect( tag[0] );
 			infos[ tag[0] ] = conn[meta_collection].find().toArray();
 		}
 
-		if ( !op.o2 ) continue;
+		if ( op.o2 === undefined ) continue;
 		copy( op, tag, infos[ tag[0] ] );
 	}
 
