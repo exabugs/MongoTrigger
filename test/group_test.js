@@ -1,5 +1,7 @@
 // db.stop.insert({});
 
+// metadata.embedded
+// metadata.ancestors
 
 // Case 1 ancestors
 print("------- Case 1 ancestors -------");
