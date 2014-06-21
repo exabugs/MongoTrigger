@@ -1,4 +1,11 @@
-var meta_collection = 'metainfo'; // collection:metainfo
+// MongoDB Extention
+//  * Embeddeds Pattern
+//  * Ancestors Pattern
+
+var metadata = 'metadata';
+var metadata_embeddeds = 'embeddeds'; // embeddeds
+var metadata_ancestors = 'ancestors'; // ancestors
+
 var stop_collection = 'test.stop'; // database:test collection:stop
 
 function copy( op, tag, infos ) {
@@ -41,7 +48,7 @@ var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
 cursor.skip( cursor.count() );
 
-var infos = {};
+var infos_embeddeds = {};
 var stop = false;
 while ( !stop ) {
 	var now = new Date();
@@ -56,13 +63,16 @@ while ( !stop ) {
 		}
 
 		var tag = op.ns.split('.');
-		if ( infos[ tag[0] ] === undefined || tag[1] === meta_collection ) {
+		if ( tag[1] === metadata ) {
 			var conn = connect( tag[0] );
-			infos[ tag[0] ] = conn[meta_collection].find().toArray();
+			var collection = op.ns.slice( op.ns.indexOf('.') + 1 );
+			if ( infos_embeddeds[ tag[0] ] === undefined || tag[2] === metadata_embeddeds ) {
+				infos_embeddeds[ tag[0] ] = conn[collection].find().toArray();
+			}
 		}
 
 		if ( op.o2 === undefined ) continue;
-		copy( op, tag, infos[ tag[0] ] );
+		copy( op, tag, infos_embeddeds[ tag[0] ] );
 	}
 
 	// Safety Trap for busy loop.
