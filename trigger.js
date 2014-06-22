@@ -12,35 +12,54 @@ var stop_collection = 'test.stop'; // database:test collection:stop
 
 function do_ancestors( op, tag, infos ) {
 	if ( !infos ) return;
-printjson(op);
+//printjson(op);
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.collection != tag[1] ) continue;
 		update_ancestors( tag[0], op, info );
 	}       
 }	       
-		
+
 function update_ancestors( db, op, info ) {
 	var field = info.parent; 
 	var o = op.o['$set'] || op.o;
 	if ( !o[field] ) return;
-	
 
 	var conn = connect( db );
+	var collection = conn[ info.collection ];
 	var select = {};
-	select[info.ancestors] = 1;
-	var parent = conn.findOne({_id: o[filed]}, select);
-	var ancestors = parent[info.ancestors];
-	
+	select[ info.ancestors ] = 1;
+printjson( {_id: o[field]} );
+printjson( {select: select} );
+
 	var _id = op.o2 ? op.o2._id : o._id;
+
+	var parent = collection.findOne( { _id: o[field] }, select );
+	if ( !parent ) return;
+	var parent_ancestors = parent[ info.ancestors ];
+printjson( {parent_ancestors: parent_ancestors} );
+
+	var myself = collection.findOne( { _id: _id }, select );
+	if ( !myself ) return;
+	var myself_ancestors = myself[ info.ancestors ];
+printjson( {myself_ancestors: myself_ancestors} );
+	var length = myself_ancestors.length - 1;
+
 	var condition = {}; 
-	condition[info.ancestors] = {$in: _id};
-	var targets = conn.find(condition, select).toArray();
+	condition[ info.ancestors ] = { $in: [ _id ] };
+printjson( {condition: condition} );
+
+	var targets = collection.find( condition, select ).toArray();
 	for ( var i = 0; i < targets.length; i++ ) {
 		var t = targets[i];
-printJson(t);
-//		conn.update({_id: t._id}, {$set: {
+printjson(t);
+		var ancestors = t.ancestors || [];
+		ancestors = parent_ancestors.concat( ancestors.slice( length ) );
+printjson( {NewAncestors : ancestors} );
+		
+		collection.update( { _id: t._id }, { $set: { ancestors: ancestors} } );
 	}
+
 }
 
 //////////////////////////////////////////////////////
@@ -86,6 +105,8 @@ function get_referrer( data, info ) {
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
 cursor.skip( cursor.count() );
+
+print( 'Ready' );
 
 var infos = {};
 var stop = false;

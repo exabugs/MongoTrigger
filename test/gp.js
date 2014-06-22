@@ -16,14 +16,15 @@ db.metadata.ancestors.drop();
 db.categories.drop();
 db.books.drop();
 
-db.categories.insert( { _id: "MongoDB", ancestors: [ "Books", "Programming", "Databases" ], parent: "Databases" } )
-db.categories.insert( { _id: "dbm", ancestors: [ "Books", "Programming", "Databases" ], parent: "Databases" } )
-db.categories.insert( { _id: "Databases", ancestors: [ "Books", "Programming" ], parent: "Programming" } )
-db.categories.insert( { _id: "Languages", ancestors: [ "Books", "Programming" ], parent: "Programming" } )
-db.categories.insert( { _id: "Programming", ancestors: [ "Books" ], parent: "Books" } )
-db.categories.insert( { _id: "Books", ancestors: [ ], parent: null } )
+db.categories.insert( { _id: "MongoDB", ancestors: [ "Books", "Programming", "Databases", "MongoDB" ], parent: "Databases" } )
+db.categories.insert( { _id: "dbm", ancestors: [ "Books", "Programming", "Databases", "dbm" ], parent: "Databases" } )
+db.categories.insert( { _id: "Databases", ancestors: [ "Books", "Programming", "Databases" ], parent: "Programming" } )
+db.categories.insert( { _id: "Languages", ancestors: [ "Books", "Programming", "Language" ], parent: "Programming" } )
+db.categories.insert( { _id: "Programming", ancestors: [ "Books", "Programing" ], parent: "Books" } )
+db.categories.insert( { _id: "Books", ancestors: [ "Books" ], parent: null } )
 
-db.metadata.ancestors.insert({collection: 'books', parent: 'parent', ancestors: 'ancestors'});
-db.books.insert( { _id: "Book", categories: [ { _id: "MongoDB" } ] } )
+db.metadata.ancestors.insert({collection: 'categories', parent: 'parent', ancestors: 'ancestors'});
+// db.books.insert( { _id: "Book", categories: [ { _id: "MongoDB" } ] } )
 
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
+db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});
