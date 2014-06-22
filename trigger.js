@@ -10,6 +10,38 @@ var stop_collection = 'test.stop'; // database:test collection:stop
 
 //////////////////////////////////////////////////////
 
+function do_ancestors( op, tag, infos ) {
+	if ( !infos ) return;
+printjson(op);
+	for ( var i = 0; i < infos.length; i++ ) {
+		var info = infos[i];
+		if ( info.collection != tag[1] ) continue;
+		update_ancestors( tag[0], op, info );
+	}       
+}	       
+		
+function update_ancestors( db, op, info ) {
+	var field = info.parent; 
+	var o = op.o['$set'] || op.o;
+	if ( !o[field] ) return;
+	
+
+	var conn = connect( db );
+	var select = {};
+	select[info.ancestors] = 1;
+	var parent = conn.findOne({_id: o[filed]}, select);
+	var ancestors = parent[info.ancestors];
+	
+	var _id = op.o2 ? op.o2._id : o._id;
+	var condition = {}; 
+	condition[info.ancestors] = {$in: _id};
+	var targets = conn.find(condition, select).toArray();
+	for ( var i = 0; i < targets.length; i++ ) {
+		var t = targets[i];
+printJson(t);
+//		conn.update({_id: t._id}, {$set: {
+	}
+}
 
 //////////////////////////////////////////////////////
 
@@ -77,6 +109,7 @@ while ( !stop ) {
 			infos[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
 		}
 
+		do_ancestors( op, tag, infos[ tag[0] ][ 'ancestors' ] );
 		do_embeddeds( op, tag, infos[ tag[0] ][ 'embeddeds' ] );
 	}
 
