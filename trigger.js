@@ -3,8 +3,8 @@
 //  * Ancestors Pattern
 
 var metadata = 'metadata';
-var metadata_embeddeds = 'embeddeds'; // embeddeds
-var metadata_ancestors = 'ancestors'; // ancestors
+var metadata_embeddeds = 'embeddeds'; // metadata.embeddeds
+var metadata_ancestors = 'ancestors'; // metadata.ancestors
 
 var stop_collection = 'test.stop'; // database:test collection:stop
 
@@ -14,7 +14,8 @@ var stop_collection = 'test.stop'; // database:test collection:stop
 //////////////////////////////////////////////////////
 
 function do_embeddeds( op, tag, infos ) {
-//	if ( !infos ) return;
+	if ( !infos ) return;
+	if ( op.o2 === undefined ) return;
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.master.collection != tag[1] ) continue;
@@ -69,14 +70,13 @@ while ( !stop ) {
 		}
 
 		var tag = op.ns.split('.');
+		infos[ tag[0] ] = infos[ tag[0] ] || {};
 		if ( tag[1] === metadata && tag[2] ) {
 			var conn = connect( tag[0] );
 			var collection = op.ns.slice( op.ns.indexOf('.') + 1 );
-			infos[ tag[0] ] = infos[ tag[0] ] || {};
 			infos[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
 		}
 
-		if ( op.o2 === undefined ) continue;
 		do_embeddeds( op, tag, infos[ tag[0] ][ 'embeddeds' ] );
 	}
 
