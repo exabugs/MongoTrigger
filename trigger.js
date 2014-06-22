@@ -8,7 +8,13 @@ var metadata_ancestors = 'ancestors'; // ancestors
 
 var stop_collection = 'test.stop'; // database:test collection:stop
 
-function copy( op, tag, infos ) {
+//////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////
+
+function do_embeddeds( op, tag, infos ) {
+//	if ( !infos ) return;
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.master.collection != tag[1] ) continue;
@@ -48,7 +54,7 @@ var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
 cursor.skip( cursor.count() );
 
-var infos_embeddeds = {};
+var infos = {};
 var stop = false;
 while ( !stop ) {
 	var now = new Date();
@@ -63,16 +69,15 @@ while ( !stop ) {
 		}
 
 		var tag = op.ns.split('.');
-		if ( tag[1] === metadata ) {
+		if ( tag[1] === metadata && tag[2] ) {
 			var conn = connect( tag[0] );
 			var collection = op.ns.slice( op.ns.indexOf('.') + 1 );
-			if ( infos_embeddeds[ tag[0] ] === undefined || tag[2] === metadata_embeddeds ) {
-				infos_embeddeds[ tag[0] ] = conn[collection].find().toArray();
-			}
+			infos[ tag[0] ] = infos[ tag[0] ] || {};
+			infos[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
 		}
 
 		if ( op.o2 === undefined ) continue;
-		copy( op, tag, infos_embeddeds[ tag[0] ] );
+		do_embeddeds( op, tag, infos[ tag[0] ][ 'embeddeds' ] );
 	}
 
 	// Safety Trap for busy loop.
