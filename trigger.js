@@ -12,7 +12,6 @@ var stop_collection = 'test.stop'; // database:test collection:stop
 
 function do_ancestors( op, tag, infos ) {
 	if ( !infos ) return;
-//printjson(op);
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.collection != tag[1] ) continue;
@@ -29,34 +28,25 @@ function update_ancestors( db, op, info ) {
 	var collection = conn[ info.collection ];
 	var select = {};
 	select[ info.ancestors ] = 1;
-printjson( {_id: o[field]} );
-printjson( {select: select} );
 
 	var _id = op.o2 ? op.o2._id : o._id;
 
 	var parent = collection.findOne( { _id: o[field] }, select );
 	if ( !parent ) return;
 	var parent_ancestors = parent[ info.ancestors ];
-printjson( {parent_ancestors: parent_ancestors} );
 
 	var myself = collection.findOne( { _id: _id }, select );
 	if ( !myself ) return;
 	var myself_ancestors = myself[ info.ancestors ];
-printjson( {myself_ancestors: myself_ancestors} );
 	var length = myself_ancestors.length - 1;
 
 	var condition = {}; 
 	condition[ info.ancestors ] = { $in: [ _id ] };
-printjson( {condition: condition} );
-
 	var targets = collection.find( condition, select ).toArray();
 	for ( var i = 0; i < targets.length; i++ ) {
 		var t = targets[i];
-printjson(t);
 		var ancestors = t.ancestors || [];
 		ancestors = parent_ancestors.concat( ancestors.slice( length ) );
-printjson( {NewAncestors : ancestors} );
-		
 		collection.update( { _id: t._id }, { $set: { ancestors: ancestors} } );
 	}
 
@@ -101,6 +91,7 @@ function get_referrer( data, info ) {
 	return obj;
 }
 
+//////////////////////////////////////////////////////
 
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
