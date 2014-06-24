@@ -28,3 +28,23 @@ db.metadata.ancestors.insert({collection: 'categories', parent: 'parent', ancest
 
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
 db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});
+
+
+
+// Case 2 ancestors
+// ルートから(親から)順に登録するなら、ancestorsは自動生成。
+print("------- Case 2 ancestors -------");
+
+db.metadata.ancestors.drop();
+db.metadata.ancestors.insert({collection: 'categories', parent: 'parent', ancestors: 'ancestors'});
+
+db.categories.drop();
+db.categories.insert( { _id: "Books",       parent: null          } );
+db.categories.insert( { _id: "Programming", parent: "Books"       } );
+db.categories.insert( { _id: "Databases",   parent: "Programming" } );
+db.categories.insert( { _id: "Languages",   parent: "Programming" } );
+db.categories.insert( { _id: "MongoDB",     parent: "Databases"   } );
+db.categories.insert( { _id: "dbm",         parent: "Databases"   } );
+
+db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
+db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});

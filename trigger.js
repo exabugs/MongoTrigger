@@ -31,13 +31,8 @@ function update_ancestors( db, op, info ) {
 
 	var _id = op.o2 ? op.o2._id : o._id;
 
-	var parent = collection.findOne( { _id: o[field] }, select );
-	if ( !parent ) return;
-	var parent_ancestors = parent[ info.ancestors ];
-
-	var myself = collection.findOne( { _id: _id }, select );
-	if ( !myself ) return;
-	var myself_ancestors = myself[ info.ancestors ];
+	var parent_ancestors = get_ancestors( conn, info, o[field], select );
+	var myself_ancestors = get_ancestors( conn, info, _id, select );
 	var length = myself_ancestors.length - 1;
 
 	var condition = {}; 
@@ -49,7 +44,22 @@ function update_ancestors( db, op, info ) {
 		ancestors = parent_ancestors.concat( ancestors.slice( length ) );
 		collection.update( { _id: t._id }, { $set: { ancestors: ancestors} } );
 	}
+}
 
+function get_ancestors( conn, info, _id, fields ) {
+	if ( !_id ) return [];
+	fields = fields || {};
+	fields[ info.ancestors ] = 1;
+	var collection = conn[ info.collection ];
+	var object = collection.findOne( { _id: _id }, fields );
+	if ( !object ) return [];
+	var ancestors = object[ info.ancestors ];
+	if ( !ancestors ) {
+		var parent = get_ancestors( conn, info, object[ info.parent ], fields );
+		ancestors = parent.concat( object._id );
+		collection.update( { _id: object._id }, { $set: { ancestors: ancestors} } );
+	}
+	return ancestors;
 }
 
 //////////////////////////////////////////////////////
