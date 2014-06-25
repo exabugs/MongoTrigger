@@ -133,7 +133,7 @@ for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 
 		for ( var info in trigger_info ) {
 			var data = trigger_data[ tag[0] ][ info ];
-			if ( !data ) continue;
+			if ( !data ) continue; // null, undefined, empty array
 			trigger_info[info]( op, tag, data );
 		}
 	}
