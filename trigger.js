@@ -103,7 +103,7 @@ function get_referrer( data, info ) {
 
 // Trigger Definition
 var trigger_data = {};
-var trigger_info = {
+var trigger_func = {
 	embeddeds: do_embeddeds,
 	ancestors: do_ancestors
 };
@@ -131,10 +131,10 @@ for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 			trigger_data[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
 		}
 
-		for ( var info in trigger_info ) {
-			var data = trigger_data[ tag[0] ][ info ];
+		for ( var key in trigger_func ) {
+			var data = trigger_data[ tag[0] ][ key ];
 			if ( !data ) continue; // null, undefined, empty array
-			trigger_info[info]( op, tag, data );
+			trigger_func[ key ]( op, tag, data );
 		}
 	}
 
