@@ -117,3 +117,24 @@ var doc0 = db.documents.findOne({"_id": ObjectId("539c511fb2980377adc224ca")}, {
 var doc1 = { "_id" : ObjectId("539c511fb2980377adc224ca"), "groups" : [ { "parents" : [ ObjectId("539c511fb2980377adc224cf"), ObjectId("539c511fb2980377adc224ce"), ObjectId("539c511fb2980377adc224cd") ] } ] }
 assert.eq.automsg(doc0, doc1);
 
+
+// Case 6
+// 親フォルダの権限を子供のファイルが継承する場合
+print("------- Case 6 -------");
+
+
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'folders', multi: true}, master: {collection: 'folders', fields: ['name', 'parents']}});
+
+db.folders.drop();
+db.folders.insert({"_id" : "C", name: 'develop', parents: [ "A", "B", "C" ]});
+
+db.documents.drop();
+db.documents.insert({"_id" : "Book-X", title: 'Book-X', folders: [{"_id" : "C"}]});
+
+db.folders.update({"_id" : "C"}, {$set: {"parents": [ "A", "B", "D", "C"]}});
+sleep(100);
+var doc0 = db.documents.findOne({"_id": "Book-X"}, {"folders.parents":1});
+var doc1 = { "_id" : "Book-X", "folders" : [ { "parents" : [ "A", "B", "D", "C" ] } ] }
+assert.eq.automsg(doc0, doc1);
+
