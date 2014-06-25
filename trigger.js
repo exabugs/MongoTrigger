@@ -36,12 +36,12 @@ function update_ancestors( db, op, info ) {
 
 	var condition = {}; 
 	condition[ info.ancestors ] = { $in: [ _id ] };
-	var targets = collection.find( condition, select ).toArray();
-	for ( var i = 0; i < targets.length; i++ ) {
-		var t = targets[i];
-		var ancestors = t.ancestors || [];
+	var cursor = collection.find( condition, select );
+	while ( cursor.hasNext() ) {
+		var object = cursor.next();
+		var ancestors = object.ancestors || [];
 		ancestors = parent_ancestors.concat( ancestors.slice( length ) );
-		update( collection, t._id, info.ancestors, ancestors );
+		update( collection, object._id, info.ancestors, ancestors );
 	}
 }
 
