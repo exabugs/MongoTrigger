@@ -113,8 +113,7 @@ var trigger_info = {
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
 
-var stop = false;
-for ( cursor.skip( cursor.count() ); !stop; ) {
+for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 	var now = new Date();
 //printjson( now );
 
