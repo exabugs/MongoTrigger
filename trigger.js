@@ -11,7 +11,6 @@ var stop_collection = 'test.stop'; // database:test collection:stop
 //////////////////////////////////////////////////////
 
 function do_ancestors( op, tag, infos ) {
-	if ( !infos ) return;
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
 		if ( info.collection != tag[1] ) continue;
@@ -65,7 +64,6 @@ function get_ancestors( conn, info, _id, fields ) {
 //////////////////////////////////////////////////////
 
 function do_embeddeds( op, tag, infos ) {
-	if ( !infos ) return;
 	if ( op.o2 === undefined ) return;
 	for ( var i = 0; i < infos.length; i++ ) {
 		var info = infos[i];
@@ -134,7 +132,9 @@ for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 		}
 
 		for ( var info in trigger_info ) {
-			trigger_info[info]( op, tag, trigger_data[ tag[0] ][ info ] );
+			var data = trigger_data[ tag[0] ][ info ];
+			if ( !data ) continue;
+			trigger_info[info]( op, tag, data );
 		}
 	}
 
