@@ -41,7 +41,7 @@ function update_ancestors( db, op, info ) {
 		var t = targets[i];
 		var ancestors = t.ancestors || [];
 		ancestors = parent_ancestors.concat( ancestors.slice( length ) );
-		collection.update( { _id: t._id }, { $set: { ancestors: ancestors} } );
+		update( collection, t._id, info.ancestors, ancestors );
 	}
 }
 
@@ -56,9 +56,15 @@ function get_ancestors( conn, info, _id, fields ) {
 	if ( !ancestors ) {
 		var parent = get_ancestors( conn, info, object[ info.parent ], fields );
 		ancestors = parent.concat( object._id );
-		collection.update( { _id: object._id }, { $set: { ancestors: ancestors} } );
+		update( collection, object._id, info.ancestors, ancestors );
 	}
 	return ancestors;
+}
+
+function update( collection, _id, key, value ) {
+	var object = {};
+	object[ key ] = value;
+	collection.update( { _id: _id }, { $set: object } );
 }
 
 //////////////////////////////////////////////////////
