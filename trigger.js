@@ -103,10 +103,16 @@ function get_referrer( data, info ) {
 
 //////////////////////////////////////////////////////
 
+// Trigger Definition
+var trigger_data = {};
+var trigger_info = {
+	embeddeds: do_embeddeds,
+	ancestors: do_ancestors
+};
+
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
 
-var infos = {};
 var stop = false;
 for ( cursor.skip( cursor.count() ); !stop; ) {
 	var now = new Date();
@@ -121,15 +127,16 @@ for ( cursor.skip( cursor.count() ); !stop; ) {
 		}
 
 		var tag = op.ns.split('.');
-		infos[ tag[0] ] = infos[ tag[0] ] || {};
+		trigger_data[ tag[0] ] = trigger_data[ tag[0] ] || {};
 		if ( tag[1] === metadata && tag[2] ) {
 			var conn = connect( tag[0] );
 			var collection = op.ns.slice( op.ns.indexOf('.') + 1 );
-			infos[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
+			trigger_data[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
 		}
 
-		do_ancestors( op, tag, infos[ tag[0] ][ 'ancestors' ] );
-		do_embeddeds( op, tag, infos[ tag[0] ][ 'embeddeds' ] );
+		for ( var info in trigger_info ) {
+			trigger_info[info]( op, tag, trigger_data[ tag[0] ][ info ] );
+		}
 	}
 
 	// Safety Trap for busy loop.
