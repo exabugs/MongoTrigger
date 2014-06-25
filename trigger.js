@@ -54,8 +54,8 @@ function get_ancestors( conn, info, _id, fields ) {
 	if ( !object ) return [];
 	var ancestors = object[ info.ancestors ];
 	if ( !ancestors ) {
-		var parent = get_ancestors( conn, info, object[ info.parent ], fields );
-		ancestors = parent.concat( object._id );
+		var parent_ancestors = get_ancestors( conn, info, object[ info.parent ], fields );
+		ancestors = parent_ancestors.concat( object._id );
 		update( collection, object._id, info.ancestors, ancestors );
 	}
 	return ancestors;
