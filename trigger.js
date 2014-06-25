@@ -105,13 +105,10 @@ function get_referrer( data, info ) {
 
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
 var cursor = connect( 'local' ).oplog.rs.find().addOption( option );
-cursor.skip( cursor.count() );
-
-print( 'Ready' );
 
 var infos = {};
 var stop = false;
-while ( !stop ) {
+for ( cursor.skip( cursor.count() ); !stop; ) {
 	var now = new Date();
 //printjson( now );
 
