@@ -30,8 +30,8 @@ function update_ancestors( db, op, info ) {
 
 	var _id = op.o2 ? op.o2._id : o._id;
 
-	var parent_ancestors = get_ancestors( conn, info, o[field], select );
-	var myself_ancestors = get_ancestors( conn, info, _id, select );
+	var parent_ancestors = get_ancestors( conn, info, select, o[field] );
+	var myself_ancestors = get_ancestors( conn, info, select, _id );
 	var length = myself_ancestors.length - 1;
 
 	var condition = {}; 
@@ -45,7 +45,7 @@ function update_ancestors( db, op, info ) {
 	}
 }
 
-function get_ancestors( conn, info, _id, fields ) {
+function get_ancestors( conn, info, fields, _id ) {
 	if ( !_id ) return [];
 	fields = fields || {};
 	fields[ info.ancestors ] = 1;
