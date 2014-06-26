@@ -100,7 +100,7 @@ function get_master( data, info ) {
 
 function get_referrer( data, info ) {
 	if ( !data._id ) return null;
-	var obj = {};
+	var obj = info.referrer.condition ? info.referrer.condition : {};
 	obj[ [info.referrer.field, '_id'].join('.') ] = data._id;
 	return obj;
 }

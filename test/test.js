@@ -138,3 +138,29 @@ var doc0 = db.documents.findOne({"_id": "Book-X"}, {"folders.parents":1});
 var doc1 = { "_id" : "Book-X", "folders" : [ { "parents" : [ "A", "B", "D", "C" ] } ] }
 assert.eq.automsg(doc0, doc1);
 
+
+// Case 7
+// embeddedsに条件がつく場合
+print("------- Case 7 -------");
+
+
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'folders', multi: true, condition: {type: 0}}, master: {collection: 'folders', fields: ['name', 'parents']}});
+
+db.folders.drop();
+db.folders.insert({"_id" : "C", name: 'develop', parents: [ "A", "B", "C" ]});
+
+db.documents.drop();
+db.documents.insert({"_id" : "Book-X", title: 'Book-X', folders: [{"_id" : "C"}], type: 0});
+db.documents.insert({"_id" : "Book-Y", title: 'Book-Y', folders: [{"_id" : "C"}], type: 1});
+
+db.folders.update({"_id" : "C"}, {$set: {"parents": [ "A", "B", "D", "C"]}});
+sleep(100);
+var doc0 = db.documents.findOne({"_id": "Book-X"}, {"folders.parents":1});
+var doc1 = { "_id" : "Book-X", "folders" : [ { "parents" : [ "A", "B", "D", "C" ] } ] };
+assert.eq.automsg(doc0, doc1);
+
+var doc20 = db.documents.findOne({"_id": "Book-Y"}, {"folders.parents":1});
+var doc21 = { "_id" : "Book-Y", "folders" : [ {  } ] };
+assert.eq.automsg(doc20, doc21);
+
