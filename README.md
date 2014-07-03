@@ -24,7 +24,7 @@ test.sh
 
 ### How-To Config
 
-[YourDatabase].metainfo
+[YourDatabase].metadata.embeddeds
 ```
 {
     "referrer" : {
