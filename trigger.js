@@ -78,7 +78,7 @@ function do_embeddeds( op, tag, infos ) {
 		if ( !master ) continue;
 		var referrer = get_referrer( op.o2, info );
 		if ( !referrer ) continue;
-		var conn = connect( tag[0] );
+		var conn = connect( info.referrer.db || tag[0] );
 		conn[ info.referrer.collection ].update( referrer, { $set: master }, { multi: true } );
 	}
 }

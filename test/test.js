@@ -164,3 +164,30 @@ var doc20 = db.documents.findOne({"_id": "Book-Y"}, {"folders.parents":1});
 var doc21 = { "_id" : "Book-Y", "folders" : [ {  } ] };
 assert.eq.automsg(doc20, doc21);
 
+// Case 8
+// DBが異なる場合
+print("------- Case 8 -------");
+
+use test;
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {db: 'test2', collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+
+db.users.drop();
+db.users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
+
+use test2;
+db.documents.drop();
+db.documents.insert({"_id" : "doc1", title: 'doc1', author: {"_id" : "sakurai"}});
+
+use test;
+db.users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
+
+sleep(100);
+
+use test2;
+var document0 = db.documents.findOne({"_id" : "doc1"}, {"author.name":1});
+var document1 = {"_id": "doc1", "author":{"name":"sakurai2"}};
+assert.eq.automsg(document0, document1);
+
+
+
