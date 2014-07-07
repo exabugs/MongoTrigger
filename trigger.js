@@ -129,6 +129,11 @@ for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 			break;
 		}
 
+		// Primary Server Only.
+		if ( rs.isMaster().primary != rs.isMaster().me ) {
+			continue;
+		}
+
 		var tag = op.ns.split('.');
 		trigger_data[ tag[0] ] = trigger_data[ tag[0] ] || {};
 		if ( tag[1] === metadata && tag[2] ) {
