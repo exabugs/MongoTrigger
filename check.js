@@ -1,3 +1,8 @@
+// for Sharding Environment.
+function connect( name ) {
+        return db.getSisterDB( name );
+}
+
 var stop_collection = 'test.stop'; // database:test collection:stop
 
 var option = DBQuery.Option.awaitData | DBQuery.Option.tailable;
