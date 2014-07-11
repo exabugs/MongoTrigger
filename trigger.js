@@ -8,6 +8,11 @@ var metadata_ancestors = 'ancestors'; // metadata.ancestors
 
 var stop_collection = 'test.stop'; // database:test collection:stop
 
+// for Sharding Environment.
+function connect( name ) {
+	return db.getSisterDB( name );
+}
+
 //////////////////////////////////////////////////////
 
 function do_ancestors( op, tag, infos ) {
