@@ -110,11 +110,19 @@ Filter0.prototype.write = function (op) {
       }
 
       var self = this;
-      this.timeoutId = setTimeout(function () {
+      if ( 100 <= this.ops.length ) {
+        // RangeError: Maximum call stack size exceeded
+        // コールスタック制限対応のため100件で小切りにする
         self.timeoutId = 0;
         self.emit('data', self.ops);
         self.ops = [];
-      }, 200);
+      } else {
+        this.timeoutId = setTimeout(function () {
+          self.timeoutId = 0;
+          self.emit('data', self.ops);
+          self.ops = [];
+        }, 200);
+      }
     }
   }
 };
