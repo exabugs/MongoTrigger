@@ -12,7 +12,7 @@ db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai', 
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
 db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name": 'sakurai2'}});
 
-sleep(100);
+sleep(400);
 
 var document0 = db.documents.findOne({"_id" : ObjectId("539c511fb2980377adc224ca")}, {"author.name":1});
 var document1 = {"_id":ObjectId("539c511fb2980377adc224ca"), "author":{"name":"sakurai2"}};
@@ -33,7 +33,7 @@ db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sak
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
 
-sleep(100);
+sleep(400);
 
 var document0 = db.documents.findOne({"_id" : ObjectId("539c511fb2980377adc224ca")}, {"author.name.first":1});
 var document1 = {"_id":ObjectId("539c511fb2980377adc224ca"), "author":[{"name":{"first":"hajime2"}}]};
@@ -55,7 +55,7 @@ db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cb"), title: 'doc2'
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cc"), title: 'doc3', author: [{"_id" : ObjectId("539c511fb2980377adc224ce")}]});
 db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
 
-sleep(100);
+sleep(400);
 
 var doc1_0 = db.documents.findOne({"_id" : ObjectId("539c511fb2980377adc224ca")}, {"author.name.first":1});
 var doc1_1 = {"_id":ObjectId("539c511fb2980377adc224ca"), "author":[{"name":{"first":"hajime2"}}]};
@@ -84,7 +84,7 @@ db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai', 
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
 db.users.update({"age" : 42}, {$set: {"name": 'sakurai2'}});
 
-sleep(100);
+sleep(400);
 
 var document0 = db.documents.findOne({"_id" : ObjectId("539c511fb2980377adc224ca")}, {"author.name":1});
 var document1 = {"_id":ObjectId("539c511fb2980377adc224ca"), "author":{"name":"sakurai2"}};
@@ -112,7 +112,7 @@ ObjectId("539c511fb2980377adc224cf"),
 ObjectId("539c511fb2980377adc224ce"),
 ObjectId("539c511fb2980377adc224cd")
 ]}});
-sleep(100);
+sleep(400);
 var doc0 = db.documents.findOne({"_id": ObjectId("539c511fb2980377adc224ca")}, {"groups.parents":1});
 var doc1 = { "_id" : ObjectId("539c511fb2980377adc224ca"), "groups" : [ { "parents" : [ ObjectId("539c511fb2980377adc224cf"), ObjectId("539c511fb2980377adc224ce"), ObjectId("539c511fb2980377adc224cd") ] } ] }
 assert.eq.automsg(doc0, doc1);
@@ -133,7 +133,7 @@ db.documents.drop();
 db.documents.insert({"_id" : "Book-X", title: 'Book-X', folders: [{"_id" : "C"}]});
 
 db.folders.update({"_id" : "C"}, {$set: {"parents": [ "A", "B", "D", "C"]}});
-sleep(100);
+sleep(400);
 var doc0 = db.documents.findOne({"_id": "Book-X"}, {"folders.parents":1});
 var doc1 = { "_id" : "Book-X", "folders" : [ { "parents" : [ "A", "B", "D", "C" ] } ] }
 assert.eq.automsg(doc0, doc1);
@@ -155,7 +155,7 @@ db.documents.insert({"_id" : "Book-X", title: 'Book-X', folders: [{"_id" : "C"}]
 db.documents.insert({"_id" : "Book-Y", title: 'Book-Y', folders: [{"_id" : "C"}], type: 1});
 
 db.folders.update({"_id" : "C"}, {$set: {"parents": [ "A", "B", "D", "C"]}});
-sleep(100);
+sleep(400);
 var doc0 = db.documents.findOne({"_id": "Book-X"}, {"folders.parents":1});
 var doc1 = { "_id" : "Book-X", "folders" : [ { "parents" : [ "A", "B", "D", "C" ] } ] };
 assert.eq.automsg(doc0, doc1);
@@ -182,7 +182,7 @@ db.documents.insert({"_id" : "doc1", title: 'doc1', author: {"_id" : "sakurai"}}
 use test;
 db.users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
 
-sleep(100);
+sleep(400);
 
 use test2;
 var document0 = db.documents.findOne({"_id" : "doc1"}, {"author.name":1});

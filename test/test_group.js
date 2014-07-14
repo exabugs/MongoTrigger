@@ -27,7 +27,7 @@ db.metadata.ancestors.insert({collection: 'categories', parent: 'parent', ancest
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
 db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});
 
-sleep(200);
+sleep(300);
 
 var Obj_0 = db.categories.findOne( {_id: "dbm"}, {ancestors: 1} );
 var Obj_1 = { "_id" : "dbm", "ancestors" : [ "Books", "Programming", "Language", "MongoDB", "dbm" ] };
@@ -51,13 +51,13 @@ db.categories.insert( { _id: "MongoDB",     parent: "Databases"   } );
 db.categories.insert( { _id: "dbm",         parent: "Databases"   } );
 
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
-sleep(200);
+sleep(400);
 var Obj_20 = db.categories.findOne( {_id: "MongoDB"}, {ancestors: 1} );
 var Obj_21 = { "_id" : "MongoDB", "ancestors" : [ "Books", "Programming", "Languages", "MongoDB" ] }
 assert.eq.automsg(Obj_20, Obj_21);
 
 db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});
-sleep(200);
+sleep(400);
 var Obj_30 = db.categories.findOne( {_id: "dbm"}, {ancestors: 1} );
 var Obj_31 = { "_id" : "dbm", "ancestors" : [ "Books", "Programming", "Languages", "MongoDB", "dbm" ] }
 assert.eq.automsg(Obj_30, Obj_31);
@@ -88,10 +88,10 @@ db.books.insert( {_id: "A", categories: [{_id: "MongoDB"}]} );
 
 
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
-sleep(200);
+sleep(800);
 var Obj_40 = db.categories.findOne( {_id: "MongoDB"}, {ancestors: 1} );
 var Obj_41 = { "_id" : "MongoDB", "ancestors" : [ "Books", "Programming", "Languages", "MongoDB" ] }
-assert.eq.automsg(Obj_20, Obj_21);
+assert.eq.automsg(Obj_40, Obj_41);
 
 var Obj_50 = db.books.findOne( {_id: "A"}, {categories: 1} );
 var Obj_51 = { "_id" : "A", "categories" : [ { "_id" : "MongoDB", "ancestors" : [ "Books", "Programming", "Languages", "MongoDB" ] } ] };

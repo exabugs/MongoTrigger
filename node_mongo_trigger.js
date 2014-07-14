@@ -1,3 +1,89 @@
+"use strict";
+
+var async = require('async');
+var MongoClient = require('mongodb').MongoClient;
+
+var direct_port = 27017;
+var mongos_port = 27017;
+
+var dbs = ['test'];
+
+var metadata = 'metadata';
+
+// Trigger Definition
+var trigger_data = {};
+var trigger_func = {
+//	embeddeds: do_embeddeds,
+//	ancestors: do_ancestors
+};
+
+
+
+var now = Math.ceil( (new Date()).getTime() / 1000 );
+
+var connections = {};
+
+var tasks = [];
+
+tasks.push( function( next ) {
+	async.each(dbs, function( name, done ) {
+		var local = url( '127.0.0.1', mongos_port, name );
+		MongoClient.connect( local, function ( err, db ) {
+			for ( var key in trigger_func ) {
+				var coll = [metadata, key].join('.');
+				trigger_data[ name ][ key ] = db.collection( coll ).find().toArray();
+				done( err );
+			}
+		});
+	}, function ( err ) {
+		next( err );
+	});
+});
+
+tasks.push( function( next ) {
+//			trigger_data[ tag[0] ] = trigger_data[ tag[0] ] || {};
+//			if ( tag[1] === metadata && tag[2] ) {
+//				var conn = connect( tag[0] );
+//				var collection = op.ns.slice( op.ns.indexOf('.') + 1 );
+//				trigger_data[ tag[0] ][ tag[2] ] = conn[collection].find().toArray();
+//			}
+
+	next(null);
+});
+
+tasks.push( function( next ) {
+	var local = url( '127.0.0.1', direct_port, 'local' );
+	MongoClient.connect( local, function ( err, conn ) {
+		next( err, conn );
+	});
+});
+
+tasks.push( function( conn, next ) {
+	var cursor = conn.collection( 'oplog.rs' ).find( {}, { tailable: true } );
+	cursor.each( function( err, op ) {
+		if ( now < op.ts.high_ ) {
+console.log(op);
+			var tag = op.ns.split('.');
+			for ( var key in trigger_func ) {
+				var data = trigger_data[ tag[0] ][ key ];
+				if ( !data ) continue; // null, undefined, empty array
+//				trigger_func[ key ]( op, tag, data );
+			}
+		}
+	});
+});
+
+async.waterfall( tasks, function( err ) {
+
+});
+
+
+function url( ip, port, db ) {
+	return 'mongodb://' + ip + ':' + port + '/' + db;
+}
+
+/*
+
 // MongoDB Extention
 //  * Embeddeds Pattern
 //  * Ancestors Pattern
@@ -62,7 +148,7 @@ function get_ancestors( conn, info, fields, _id ) {
 	if ( !object ) return [];
 	var ancestors = object[ info.ancestors ];
 	if ( !ancestors ) {
-		var parent_ancestors = get_ancestors( conn, info, fields, object[ info.parent ] );
+		var parent_ancestors = get_ancestors( conn, info, object[ info.parent ], fields );
 		ancestors = parent_ancestors.concat( object._id );
 		update( collection, object._id, info.ancestors, ancestors );
 	}
@@ -171,3 +257,4 @@ for ( var stop = false, cursor = cursor.skip( cursor.count() ); !stop; ) {
 		break;
 	}
 }
+*/
