@@ -4,11 +4,11 @@
 print("------- Case 1 -------");
 
 db.metadata.embeddeds.drop();
-db.users.drop();
-db.documents.drop();
-
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+sleep(300);
+db.users.drop();
 db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
+db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
 db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name": 'sakurai2'}});
 
@@ -25,11 +25,11 @@ assert.eq.automsg(document0, document1);
 print("------- Case 2 -------");
 
 db.metadata.embeddeds.drop();
-db.users.drop();
-db.documents.drop();
-
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'users', fields: ['name.first', 'age']}});
+sleep(300);
+db.users.drop();
 db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
+db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
 
@@ -45,11 +45,11 @@ assert.eq.automsg(document0, document1);
 print("------- Case 3 -------");
 
 db.metadata.embeddeds.drop();
-db.users.drop();
-db.documents.drop();
-
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'users', fields: ['name.first', 'age']}});
+sleep(300)
+db.users.drop();
 db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
+db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cb"), title: 'doc2', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cc"), title: 'doc3', author: [{"_id" : ObjectId("539c511fb2980377adc224ce")}]});
@@ -76,11 +76,11 @@ assert.eq.automsg(doc3_0, doc3_1);
 print("------- Case 4 -------");
 
 db.metadata.embeddeds.drop();
-db.users.drop();
-db.documents.drop();
-
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+sleep(300);
+db.users.drop();
 db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
+db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
 db.users.update({"age" : 42}, {$set: {"name": 'sakurai2'}});
 
@@ -96,15 +96,15 @@ assert.eq.automsg(document0, document1);
 print("------- Case 5 -------");
 
 db.metadata.embeddeds.drop();
-db.groups.drop();
-db.documents.drop();
-
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'groups', multi: true}, master: {collection: 'groups', fields: ['name', 'parents']}});
+sleep(300);
+db.groups.drop();
 db.groups.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'develop', parents: [
 ObjectId("539c511fb2980377adc224cd"),
 ObjectId("539c511fb2980377adc224ce"),
 ObjectId("539c511fb2980377adc224cf")
 ]});
+db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', groups: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 
 db.groups.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"parents": [
@@ -125,7 +125,7 @@ print("------- Case 6 -------");
 
 db.metadata.embeddeds.drop();
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'folders', multi: true}, master: {collection: 'folders', fields: ['name', 'parents']}});
-
+sleep(300);
 db.folders.drop();
 db.folders.insert({"_id" : "C", name: 'develop', parents: [ "A", "B", "C" ]});
 
@@ -146,7 +146,7 @@ print("------- Case 7 -------");
 
 db.metadata.embeddeds.drop();
 db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'folders', multi: true, condition: {type: 0}}, master: {collection: 'folders', fields: ['name', 'parents']}});
-
+sleep(300);
 db.folders.drop();
 db.folders.insert({"_id" : "C", name: 'develop', parents: [ "A", "B", "C" ]});
 
@@ -171,7 +171,7 @@ print("------- Case 8 -------");
 use test;
 db.metadata.embeddeds.drop();
 db.metadata.embeddeds.insert({referrer: {db: 'test2', collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
-
+sleep(300);
 db.users.drop();
 db.users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
 

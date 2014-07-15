@@ -27,7 +27,7 @@ db.metadata.ancestors.insert({collection: 'categories', parent: 'parent', ancest
 db.categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
 db.categories.update( {_id: "dbm"}, {$set: {parent: "MongoDB"}});
 
-sleep(300);
+sleep(400);
 
 var Obj_0 = db.categories.findOne( {_id: "dbm"}, {ancestors: 1} );
 var Obj_1 = { "_id" : "dbm", "ancestors" : [ "Books", "Programming", "Language", "MongoDB", "dbm" ] };
