@@ -6,13 +6,18 @@ var stream = require('stream');
 var util = require('util');
 var MongoClient = require('mongodb').MongoClient;
 
-var direct_port = 27017;
-var mongos_port = 27017;
+var args = process.argv;
+var direct_conf = parse_config(args[2]);
+var mongos_conf = parse_config(args[3]);
 
-var dbs = ['test', 'test1', 'test2'];
+var dbs = [];
 
 var metadata = 'metadata';
 
+function parse_config(param) {
+  var values = (param || '').split(':');
+  return [ (values[0] || '127.0.0.1'), (values[1] || '27017')];
+}
 
 //////////////////////////////////////////////////////
 
@@ -200,9 +205,34 @@ var connections = {};
 
 var tasks = [];
 
+
 tasks.push(function (next) {
+  var config = url(direct_conf[0], direct_conf[1], 'local');
+  MongoClient.connect(config, function (err, conn) {
+    next(err, conn);
+  });
+});
+
+tasks.push(function (conn, next) {
+  var system = {
+    config: 1,
+    admin: 1,
+    local: 1
+  };
+  conn.admin().listDatabases(function (err, list) {
+    for (var i in list.databases) {
+      var db = list.databases[i].name;
+      if (!system[ db ]) {
+        dbs.push(db);
+      }
+    }
+    next(err, conn);
+  });
+});
+
+tasks.push(function (conn, next) {
   async.eachSeries(dbs, function (name, done) {
-    var config = url('127.0.0.1', mongos_port, name);
+    var config = url(mongos_conf[0], mongos_conf[1], name);
     MongoClient.connect(config, function (err, db) {
       connections[ name ] = db;
       trigger_map[ name ] = {};
@@ -211,7 +241,7 @@ tasks.push(function (next) {
       });
     });
   }, function (err) {
-    next(err);
+    next(err, conn);
   });
 });
 
@@ -229,17 +259,10 @@ function getTriggerData(name, map, callback) {
       done(err);
     });
   }, function (err) {
-    console.log( JSON.stringify(trigger_map));
+    console.log(JSON.stringify(trigger_map));
     callback(err);
   });
 }
-
-tasks.push(function (next) {
-  var config = url('127.0.0.1', direct_port, 'local');
-  MongoClient.connect(config, function (err, conn) {
-    next(err, conn);
-  });
-});
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,7 +402,9 @@ tasks.push(function (conn, next) {
 
 
 async.waterfall(tasks, function (err) {
-
+  if (err) {
+    console.log(err);
+  }
 });
 
 function url(ip, port, db) {
