@@ -4,13 +4,13 @@
 print("------- Case 1 -------");
 
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age']}});
 sleep(300);
-db.users.drop();
-db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
+db.test_users.drop();
+db.test_users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
 db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
-db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name": 'sakurai2'}});
+db.test_users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name": 'sakurai2'}});
 
 sleep(400);
 
@@ -25,13 +25,13 @@ assert.eq.automsg(document0, document1);
 print("------- Case 2 -------");
 
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'users', fields: ['name.first', 'age']}});
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'test_users', fields: ['name.first', 'age']}});
 sleep(300);
-db.users.drop();
-db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
+db.test_users.drop();
+db.test_users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
 db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
-db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
+db.test_users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
 
 sleep(400);
 
@@ -45,15 +45,15 @@ assert.eq.automsg(document0, document1);
 print("------- Case 3 -------");
 
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'users', fields: ['name.first', 'age']}});
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: true}, master: {collection: 'test_users', fields: ['name.first', 'age']}});
 sleep(300)
-db.users.drop();
-db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
+db.test_users.drop();
+db.test_users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: {last: 'sakurai', first: 'hajime'}, age: 42});
 db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cb"), title: 'doc2', author: [{"_id" : ObjectId("539c511fb2980377adc224cd")}]});
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224cc"), title: 'doc3', author: [{"_id" : ObjectId("539c511fb2980377adc224ce")}]});
-db.users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
+db.test_users.update({"_id" : ObjectId("539c511fb2980377adc224cd")}, {$set: {"name.first": 'hajime2'}});
 
 sleep(400);
 
@@ -76,13 +76,13 @@ assert.eq.automsg(doc3_0, doc3_1);
 print("------- Case 4 -------");
 
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age']}});
 sleep(300);
-db.users.drop();
-db.users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
+db.test_users.drop();
+db.test_users.insert({"_id" : ObjectId("539c511fb2980377adc224cd"), name: 'sakurai',  age: 42});
 db.documents.drop();
 db.documents.insert({"_id" : ObjectId("539c511fb2980377adc224ca"), title: 'doc1', author: {"_id" : ObjectId("539c511fb2980377adc224cd")}});
-db.users.update({"age" : 42}, {$set: {"name": 'sakurai2'}});
+db.test_users.update({"age" : 42}, {$set: {"name": 'sakurai2'}});
 
 sleep(400);
 
@@ -170,17 +170,17 @@ print("------- Case 8 -------");
 
 use test;
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {db: 'test2', collection: 'documents', field: 'author', multi: false}, master: {collection: 'users', fields: ['name', 'age']}});
+db.metadata.embeddeds.insert({referrer: {db: 'test2', collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age']}});
 sleep(300);
-db.users.drop();
-db.users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
+db.test_users.drop();
+db.test_users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
 
 use test2;
 db.documents.drop();
 db.documents.insert({"_id" : "doc1", title: 'doc1', author: {"_id" : "sakurai"}});
 
 use test;
-db.users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
+db.test_users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
 
 sleep(400);
 
