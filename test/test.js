@@ -191,3 +191,26 @@ assert.eq.automsg(document0, document1);
 
 
 
+// Case 9
+// まったく同じコピーが欲しい場合 (referrerのfieldが''の場合)
+print("------- Case 9 -------");
+
+use test;
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: 'test_users_copy', field: '', multi: false}, master: {collection: 'test_users', fields: ['name', 'age']}});
+sleep(300);
+db.test_users.drop();
+db.test_users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
+
+db.test_users_copy.drop();
+db.test_users_copy.insert({"_id" : "sakurai"});
+
+db.test_users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
+
+sleep(400);
+
+var document0 = db.test_users_copy.findOne({"_id" : "sakurai"}, {name:1});
+var document1 = {"_id": "sakurai", "name":"sakurai2"};
+assert.eq.automsg(document0, document1);
+
+
