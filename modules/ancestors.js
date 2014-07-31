@@ -5,6 +5,7 @@ var async = require('async');
 //////////////////////////////////////////////////////
 
 var Ancestors = function (connections) {
+  this.config = 'ancestors';
   this.connections = connections;
   this.infos = {};
 };

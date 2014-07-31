@@ -25,8 +25,10 @@ var connections = {};
 
 // Trigger Definition
 var trigger_func = {
+  lifetimes: new (require('./modules/lifetimes'))(connections),
   ancestors: new (require('./modules/ancestors'))(connections),
-  embeddeds: new (require('./modules/embeddeds'))(connections)
+  embeddeds: new (require('./modules/embeddeds'))(connections),
+  reverseEmbeddeds: new (require('./modules/reverseEmbeddeds'))(connections)
 };
 
 var trigger_map = {};
@@ -82,7 +84,8 @@ tasks.push(function (conn, next) {
  */
 function getTriggerData(name, map, callback) {
   async.eachSeries(Object.keys(trigger_func), function (key, done) {
-    var coll = [ metadata, key ].join('.');
+    var config = trigger_func[ key ].config;
+    var coll = [ metadata, config ].join('.');
     connections[ name ].collection(coll).find().toArray(function (err, docs) {
       trigger_func[ key ].infos[ name ] = docs;
       trigger_func[ key ].map(name, map);

@@ -1,10 +1,12 @@
 "use strict";
 
 var async = require('async');
+var util = require('./util');
 
 //////////////////////////////////////////////////////
 
 var Embeddeds = function (connections) {
+  this.config = 'embeddeds';
   this.connections = connections;
   this.infos = {};
 };
@@ -13,6 +15,9 @@ Embeddeds.prototype.map = function (db, map) {
   this.infos[ db ].forEach(function (info) {
 //  map[ [ db, info.referrer.collection ].join('.') ] = 1; // referrer は不要
     map[ [ db, info.master.collection ].join('.') ] = 1;
+
+    var convert = util.hash(info.master.fields);
+    info.master.map= util.hash(info.master.map, convert);
   });
 };
 
@@ -57,7 +62,9 @@ Embeddeds.prototype.get_master = function (data, info) {
     var field = fields[i];
     var o = data['$set'] || data;
     if (!o[field]) continue;
-    obj[ [referrer_field, field].join('.') ] = o[field];
+    var _field = info.master.map[field];
+    _field = referrer_field ? [referrer_field, _field].join('.') : _field;
+    obj[_field] = o[field];
     update = true;
   }
   return update ? obj : null;
@@ -66,7 +73,8 @@ Embeddeds.prototype.get_master = function (data, info) {
 Embeddeds.prototype.get_referrer = function (data, info) {
   if (!data._id) return null;
   var obj = info.referrer.condition ? info.referrer.condition : {};
-  obj[ [info.referrer.field, '_id'].join('.') ] = data._id;
+  var _field = info.referrer.field ? [info.referrer.field, '_id'].join('.') : '_id';
+  obj[_field] = data._id;
   return obj;
 };
 
