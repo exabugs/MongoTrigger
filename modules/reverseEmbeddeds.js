@@ -136,7 +136,8 @@ function hash(array) {
 
 ReverseEmbeddeds.prototype.get_referrer = function (data, info) {
   if (!data._id) return null;
-  var obj = { _id: data._id };
+  var obj = info.referrer.condition || {};
+  obj._id = data._id;
   return obj;
 };
 

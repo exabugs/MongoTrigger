@@ -21,9 +21,20 @@ Lifetimes.prototype.execute = function (op, tag, callback) {
   var done = false;
   async.eachSeries(self.infos[ tag[0] ], function (info, next) {
     if (info.master.collection === tag[1]) {
-      self.upsert(tag[0], op, info, function (err) {
-        done = true;
-        next(err);
+
+      var conn = self.connections[ tag[0] ];
+      var collection = conn.collection(info.master.collection);
+      var condition = info.master.condition || {};
+      condition._id = op.o._id;
+      collection.findOne(condition, function (err, result) {
+        if (result) {
+          self.upsert(tag[0], op, info, function (err) {
+            done = true;
+            next(err);
+          });
+        } else {
+          next(null);
+        }
       });
     } else {
       next(null);

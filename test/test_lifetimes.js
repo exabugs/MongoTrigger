@@ -42,3 +42,29 @@ sleep(600);
 var document0 = db.test_messages.findOne({"_id" : "card_A"});
 var document1 = { "_id" : "card_A", "name" : "sakurai", "age" : 42 };
 assert.eq.automsg(document0, document1);
+
+
+
+
+// Case 3 条件をつける場合
+print("------- Case 3 -------");
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: "test_messages", field: "" }, master : {collection: "test_cards", fields: ['name']}});
+db.metadata.lifetimes.drop();
+db.metadata.lifetimes.insert({"referrer" : {"collection" : "test_messages" }, "master" : {"collection" : "test_cards", condition: {valid: true} }});
+sleep(300);
+db.test_messages.drop();
+db.test_cards.drop();
+db.test_cards.insert({"_id" : "card_A", name: 'sakurai_A',  valid: true});
+db.test_cards.insert({"_id" : "card_B", name: 'sakurai_B',  valid: false});
+
+sleep(600);
+
+var document0 = db.test_messages.findOne({"_id" : "card_A"});
+var document1 = { "_id" : "card_A", "name" : "sakurai_A" };
+assert.eq.automsg(document0, document1);
+
+
+var document0 = db.test_messages.findOne({"_id" : "card_B"});
+var document1 = null;
+assert.eq.automsg(document0, document1);
