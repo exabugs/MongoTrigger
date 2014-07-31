@@ -27,7 +27,7 @@ Lifetimes.prototype.execute = function (op, tag, callback) {
       var condition = info.master.condition || {};
       condition._id = op.o._id;
       collection.findOne(condition, function (err, result) {
-        if (result) {
+        if (!err && ((result && op.op == 'i') || (!result && op.op == 'd'))) {
           self.upsert(tag[0], op, info, function (err) {
             done = true;
             next(err);

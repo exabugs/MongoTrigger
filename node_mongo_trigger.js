@@ -63,7 +63,7 @@ tasks.push(function (conn, next) {
 });
 
 tasks.push(function (conn, next) {
-  async.eachSeries(dbs, function (name, done) {
+  async.each(dbs, function (name, done) {
     var config = url(mongos_conf[0], mongos_conf[1], name);
     MongoClient.connect(config, function (err, db) {
       connections[ name ] = db;
