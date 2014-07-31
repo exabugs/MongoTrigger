@@ -214,3 +214,24 @@ var document1 = {"_id": "sakurai", "name":"sakurai2"};
 assert.eq.automsg(document0, document1);
 
 
+
+
+
+
+// Case 10
+print("------- Case 10 -------");
+
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age'], map:[["name","name.first"]]}});
+sleep(300);
+db.test_users.drop();
+db.test_users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
+db.documents.drop();
+db.documents.insert({"_id" : "doc1", title: 'doc1', author: {"_id" : "sakurai"}});
+db.test_users.update({"_id" : "sakurai"}, {$set: {"name": 'sakurai2'}});
+
+sleep(400);
+
+var document0 = db.documents.findOne({"_id" : "doc1"}, {"author.name":1});
+var document1 = { "_id" : "doc1", "author" : { "name" : { "first" : "sakurai2" } } };
+assert.eq.automsg(document0, document1);
