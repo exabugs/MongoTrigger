@@ -68,3 +68,28 @@ assert.eq.automsg(document0, document1);
 var document0 = db.test_messages.findOne({"_id" : "card_B"});
 var document1 = null;
 assert.eq.automsg(document0, document1);
+
+
+
+
+
+// Case 4 定数(識別子)をつける
+print("------- Case 4 -------");
+db.metadata.lifetimes.drop();
+db.metadata.lifetimes.insert({"referrer" : {"collection" : "test_messages", "constant" : {"type": "card"} }, "master" : {"collection" : "test_cards"}});
+sleep(300);
+db.test_messages.drop();
+db.test_cards.drop();
+db.test_cards.insert({"_id" : "card_A", name: 'sakurai',  age: 42});
+
+sleep(400);
+
+var document0 = db.test_messages.findOne({"_id" : "card_A"});
+var document1 = {"_id": "card_A", "type": "card"};
+assert.eq.automsg(document0, document1);
+
+
+db.test_cards.remove({"_id" : "card_A"});
+sleep(400);
+var document0 = db.test_messages.findOne({"_id" : "card_A"});
+assert.eq.automsg(document0, null);
