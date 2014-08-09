@@ -235,3 +235,23 @@ sleep(400);
 var document0 = db.documents.findOne({"_id" : "doc1"}, {"author.name":1});
 var document1 = { "_id" : "doc1", "author" : { "name" : { "first" : "sakurai2" } } };
 assert.eq.automsg(document0, document1);
+
+
+
+// Case 11 上位のフィールドを指定して、下位がダイレクトに変更された場合
+print("------- Case 11 -------");
+
+db.metadata.embeddeds.drop();
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age']}});
+sleep(300);
+db.test_users.drop();
+db.test_users.insert({"_id" : "user_1", name: {"last": 'sakurai'},  age: 42});
+db.documents.drop();
+db.documents.insert({"_id" : "doc_1", title: 'doc1', author: {"_id" : "user_1"}});
+db.test_users.update({"_id" : "user_1"}, {$set: {"name.last": 'sakurai2'}});
+
+sleep(400);
+
+var document0 = db.documents.findOne({"_id" : "doc_1"}, {"author.name":1});
+var document1 = {"_id": "doc_1", "author":{"name": {"last":"sakurai2"}}};
+assert.eq.automsg(document0, document1);
