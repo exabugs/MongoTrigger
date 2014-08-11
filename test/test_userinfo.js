@@ -3,7 +3,7 @@ print("------- Case 1 -------");
 
 db.metadata.userinfos.drop();
 db.metadata.userinfos.insert({referrer: {db: 'test', collection: 'test_messages', field: 'userinfo_reads'}, 
-  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: {'1': true}, default: false}});
+  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: "{\"0\":false,\"1\":true}", default: false}});
 sleep(300);
 
 db.test_messages.drop();
@@ -25,7 +25,7 @@ print("------- Case 2 -------");
 
 db.metadata.userinfos.drop();
 db.metadata.userinfos.insert({referrer: {db: 'test', collection: 'test_messages', field: 'userinfo_reads'}, 
-  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: {'1': true}, default: false}});
+  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: "{\"0\":false,\"1\":true}", default: false}});
 sleep(300);
 
 db.test_messages.drop();
@@ -47,7 +47,7 @@ print("------- Case 3 -------");
 
 db.metadata.userinfos.drop();
 db.metadata.userinfos.insert({referrer: {db: 'test', collection: 'test_messages', field: 'userinfo_reads'},
-  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: {'1': true}, default: false}});
+  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: "{\"0\":false,\"1\":true}", default: false}});
 sleep(300);
 
 db.test_messages.drop();
@@ -73,7 +73,7 @@ print("------- Case 4 -------");
 
 db.metadata.userinfos.drop();
 db.metadata.userinfos.insert({referrer: {db: 'test', collection: 'test_messages', field: 'userinfo_reads'},
-  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: {'1': true, '0': false}, default: false}});
+  master: {collection: 'test_additions', fields: {target: 'messageId', user: 'uid', value: 'read'}, map: "{\"0\":false,\"1\":true}", default: false}});
 sleep(300);
 
 db.test_messages.drop();

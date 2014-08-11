@@ -222,7 +222,8 @@ assert.eq.automsg(document0, document1);
 print("------- Case 10 -------");
 
 db.metadata.embeddeds.drop();
-db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false}, master: {collection: 'test_users', fields: ['name', 'age'], map:[["name","name.first"]]}});
+db.metadata.embeddeds.insert({referrer: {collection: 'documents', field: 'author', multi: false},
+  master: {collection: 'test_users', fields: ['name', 'age'], map: "{\"name\":\"name.first\"}" }});
 sleep(300);
 db.test_users.drop();
 db.test_users.insert({"_id" : "sakurai", name: 'sakurai',  age: 42});
