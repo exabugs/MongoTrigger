@@ -21,7 +21,7 @@ db.test_categories.insert( { _id: "Languages", ancestors: [ "Books", "Programmin
 db.test_categories.insert( { _id: "Programming", ancestors: [ "Books", "Programing" ], parent: "Books" } )
 db.test_categories.insert( { _id: "Books", ancestors: [ "Books" ], parent: null } )
 
-db.metadata.ancestors.insert({collection: 'test_categories', parent: 'parent', ancestors: 'ancestors'});
+db.metadata.ancestors.insert({master: {collection: 'test_categories', fields: {parent: 'parent', ancestors: 'ancestors'}}});
 // db.books.insert( { _id: "Book", test_categories: [ { _id: "MongoDB" } ] } )
 
 db.test_categories.update( {_id: "MongoDB"}, {$set: {parent: "Languages"}});
@@ -40,7 +40,7 @@ assert.eq.automsg(Obj_0, Obj_1);
 print("------- Case 2 ancestors -------");
 
 db.metadata.ancestors.drop();
-db.metadata.ancestors.insert({collection: 'test_categories', parent: 'parent', ancestors: 'ancestors'});
+db.metadata.ancestors.insert({master: {collection: 'test_categories', fields: {parent: 'parent', ancestors: 'ancestors'}}});
 
 db.test_categories.drop();
 db.test_categories.insert( { _id: "Books",       parent: null          } );
@@ -70,7 +70,7 @@ assert.eq.automsg(Obj_30, Obj_31);
 print("------- Case 3 ancestors & embeddeds -------");
 
 db.metadata.ancestors.drop();
-db.metadata.ancestors.insert({collection: 'test_categories', parent: 'parent', ancestors: 'ancestors'});
+db.metadata.ancestors.insert({master: {collection: 'test_categories', fields: {parent: 'parent', ancestors: 'ancestors'}}});
 db.metadata.embeddeds.drop();
 db.metadata.embeddeds.insert({referrer: {collection: 'books', field: 'categories', multi: true}, master: {collection: 'test_categories', fields: ['ancestors']}});
 
